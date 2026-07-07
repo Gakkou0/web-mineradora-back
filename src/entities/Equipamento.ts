@@ -9,8 +9,5 @@ export class Equipamento {
   nome!: string;
 
   @Column({ nullable: true })
-  descricao?: string;
-
-  @Column({ nullable: true })
-  status?: string;
+  setor?: string;
 }
