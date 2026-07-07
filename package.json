@@ -13,9 +13,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
     "express": "^4.19.0",
-    "reflect-metadata": "^0.5.1",
+    "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.29"
-  },
+},
   "devDependencies": {
     "@types/cors": "^2.8.5",
     "@types/express": "^5.0.1",
