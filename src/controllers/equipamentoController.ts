@@ -6,15 +6,6 @@ const tratarErro = (res: Response, mensagem: string, error?: unknown) => {
   return res.status(500).json({ error: mensagem, detalhe: error });
 };
 
-const parseId = (id: string | string[] | undefined) => {
-  if (typeof id !== 'string') {
-    return null;
-  }
-
-  const valor = Number(id);
-  return Number.isInteger(valor) ? valor : null;
-};
-
 const getRepository = async () => {
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
@@ -41,74 +32,5 @@ export const criarEquipamento = async (req: Request, res: Response) => {
     return res.status(201).json(salvo);
   } catch (error) {
     return tratarErro(res, 'Erro ao criar equipamento', error);
-  }
-};
-
-export const buscarEquipamentoPorId = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const idNumerico = parseId(id);
-
-  if (!idNumerico) {
-    return res.status(400).json({ error: 'ID inválido' });
-  }
-
-  try {
-    const repository = await getRepository();
-    const equipamento = await repository.findOneBy({ id: idNumerico });
-
-    if (!equipamento) {
-      return res.status(404).json({ error: 'Equipamento não encontrado' });
-    }
-
-    return res.json(equipamento);
-  } catch (error) {
-    return tratarErro(res, 'Erro ao buscar equipamento', error);
-  }
-};
-
-export const atualizarEquipamento = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const idNumerico = parseId(id);
-
-  if (!idNumerico) {
-    return res.status(400).json({ error: 'ID inválido' });
-  }
-
-  try {
-    const repository = await getRepository();
-    const equipamento = await repository.findOneBy({ id: idNumerico });
-
-    if (!equipamento) {
-      return res.status(404).json({ error: 'Equipamento não encontrado' });
-    }
-
-    repository.merge(equipamento, req.body);
-    const atualizado = await repository.save(equipamento);
-    return res.json(atualizado);
-  } catch (error) {
-    return tratarErro(res, 'Erro ao atualizar equipamento', error);
-  }
-};
-
-export const removerEquipamento = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const idNumerico = parseId(id);
-
-  if (!idNumerico) {
-    return res.status(400).json({ error: 'ID inválido' });
-  }
-
-  try {
-    const repository = await getRepository();
-    const equipamento = await repository.findOneBy({ id: idNumerico });
-
-    if (!equipamento) {
-      return res.status(404).json({ error: 'Equipamento não encontrado' });
-    }
-
-    await repository.remove(equipamento);
-    return res.json({ removido: true, equipamento });
-  } catch (error) {
-    return tratarErro(res, 'Erro ao remover equipamento', error);
   }
 };
