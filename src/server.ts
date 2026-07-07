@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import equipamentoRoutes from './routes/equipamentoRoutes';
-import { supabase } from './config/supabaseClient';
+import { AppDataSource } from './config/data-source';
 
 dotenv.config();
 
@@ -17,18 +17,17 @@ app.get('/', (_req, res) => {
 
 app.get('/health', async (_req, res) => {
   try {
-    if (!supabase) {
-      return res.status(500).json({ ok: false, message: 'Supabase não configurado' });
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
     }
 
-    const { data, error } = await supabase.from('equipamentos').select('id').limit(1);
-    if (error) {
-      return res.status(500).json({ ok: false, message: 'Erro ao acessar o Supabase', error: error.message });
-    }
-
-    return res.json({ ok: true, message: 'Supabase conectado', data });
+    return res.json({ ok: true, message: 'PostgreSQL conectado' });
   } catch (error) {
-    return res.status(500).json({ ok: false, message: 'Falha inesperada', error });
+    return res.status(500).json({
+      ok: false,
+      message: 'Falha ao conectar ao PostgreSQL',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 });
 
@@ -36,6 +35,13 @@ app.use('/equipamentos', equipamentoRoutes);
 
 const port = Number(process.env.PORT || 3000);
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
+AppDataSource.initialize()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Servidor rodando na porta ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Erro ao conectar ao PostgreSQL:', error);
+    process.exit(1);
+  });
