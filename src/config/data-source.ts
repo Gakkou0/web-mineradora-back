@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 import { Equipamento } from '../entities/Equipamento';
+import { Cidade } from '../entities/Cidade';
+import { Funcionario } from '../entities/Funcionario';
+import { Servico } from '../entities/Servico';
 
 dotenv.config();
 
@@ -13,6 +16,6 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'mineradora',
   synchronize: false,
   logging: false,
-  entities: [Equipamento],
+  entities: [Equipamento, Cidade, Funcionario, Servico],
   migrations: ['src/migrations/*.ts'],
 });

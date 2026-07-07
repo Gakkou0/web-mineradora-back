@@ -3,6 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import equipamentoRoutes from './routes/equipamentoRoutes';
+import cidadeRoutes from './routes/cidadeRoutes';
+import funcionarioRoutes from './routes/funcionarioRoutes';
+import servicoRoutes from './routes/servicoRoutes';
 import { AppDataSource } from './config/data-source';
 
 dotenv.config();
@@ -32,6 +35,9 @@ app.get('/health', async (_req, res) => {
 });
 
 app.use('/equipamentos', equipamentoRoutes);
+app.use('/cidades', cidadeRoutes);
+app.use('/funcionarios', funcionarioRoutes);
+app.use('/servicos', servicoRoutes);
 
 const port = Number(process.env.PORT || 3000);
 
